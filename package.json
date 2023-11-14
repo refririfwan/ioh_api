@@ -7,6 +7,9 @@
     "build": "node ace build --production",
     "start": "node server.js",
     "test": "node ace test",
+    "dockerAttach": "docker exec -it ioh_api /bin/sh",
+    "dockerAttachRedis": "docker exec -it redis /bin/sh",
+    "dockerAttachPostgres": "docker exec -it postgres /bin/sh",
     "lint": "eslint . --ext=.ts",
     "format": "prettier --write ."
   },
