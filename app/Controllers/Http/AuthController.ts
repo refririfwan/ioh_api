@@ -15,7 +15,22 @@ export default class AuthController {
       })
     } catch (error) {
       return response.status(400).json({
-        message: error.messages,
+        message: error,
+      })
+    }
+  }
+
+  public async login({ auth, request, response }: HttpContextContract) {
+    const { email, password } = request.all()
+    try {
+      const token = await auth.attempt(email, password)
+      return response.status(200).json({
+        user: token.user,
+        token: token.token,
+      })
+    } catch (error) {
+      return response.status(401).json({
+        message: error,
       })
     }
   }
