@@ -20,10 +20,16 @@
 
 import Route from '@ioc:Adonis/Core/Route'
 
+// auth routes
 Route.group(() => {
-  Route.post('/auth/register', 'AuthController.register')
-  Route.post('/auth/login', 'AuthController.login')
+  Route.post('/register', 'AuthController.register')
+  Route.post('/login', 'AuthController.login')
+}).prefix('/auth')
+
+// api routes
+Route.group(() => {
   Route.post('/invoices', 'InvoicesController.create').middleware('auth')
   Route.put('/invoices/:id', 'InvoicesController.update').middleware('auth')
   Route.delete('/invoices/:id', 'InvoicesController.delete').middleware('auth')
+  Route.get('/invoices', 'InvoicesController.index').middleware('auth')
 }).prefix('/api')
