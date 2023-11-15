@@ -1,6 +1,7 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Invoice from 'App/Models/Invoice'
 import InvoiceItem from 'App/Models/InvoiceItem'
+import SortThreadValidator from 'App/Validators/SortThreadValidator'
 import { DateTime } from 'luxon'
 import shortUUID from 'short-uuid'
 
@@ -190,6 +191,46 @@ export default class InvoicesController {
         data: {
           invoiceId: params.id,
         },
+      })
+    } catch (error) {
+      return response.status(500).json({
+        status: 500,
+        message: 'Internal Server Error',
+        error: error,
+      })
+    }
+  }
+
+  public async index({ response, request, auth }: HttpContextContract) {
+    try {
+      const page = request.input('page', 1)
+      const perPage = request.input('per_page', 5)
+      const userId = request.input('user_id')
+
+      // Verify authorization based on the invoice owner
+      const user = await auth.user
+      if (user?.id !== +userId) {
+        return response.status(401).json({
+          status: 401,
+          message: 'Unauthorized',
+          error: 'The user ID sent is different from the user ID of the auth token used.',
+        })
+      }
+
+      const sortValidated = await request.validate(SortThreadValidator)
+      const sortBy = sortValidated.sort_by || 'id'
+      const order = sortValidated.order || 'asc'
+
+      const invoices = await Invoice.query()
+        .if(userId, (query) => query.where('user_id', userId))
+        .orderBy(sortBy, order)
+        .preload('items')
+        .paginate(page, perPage)
+
+      return response.status(200).json({
+        status: 200,
+        message: 'OK',
+        data: invoices,
       })
     } catch (error) {
       return response.status(500).json({
