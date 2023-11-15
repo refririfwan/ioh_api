@@ -35,6 +35,25 @@ VALUES (
         NOW(),
         NOW()
     );
+-- Insert sampel data into user_customers table
+INSERT INTO user_customers (
+        user_id,
+        first_name,
+        last_name,
+        phone,
+        created_at,
+        updated_at
+    )
+VALUES (1, 'John', 'Doe', '123-456-7890', NOW(), NOW()),
+    (2, 'Jane', 'Smith', '987-654-3210', NOW(), NOW()),
+    (
+        3,
+        'Bob',
+        'Johnson',
+        '555-123-4567',
+        NOW(),
+        NOW()
+    );
 -- Insert sample data into invoices table
 INSERT INTO invoices (
         id,
