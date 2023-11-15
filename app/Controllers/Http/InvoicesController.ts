@@ -240,4 +240,49 @@ export default class InvoicesController {
       })
     }
   }
+
+  public async show({ auth, response, params }) {
+    try {
+      // Check if an invoice with the provided ID exists
+      const invoice = await Invoice.query().where('id', params.id).first()
+
+      if (!invoice) {
+        // If no invoice exists, return an error
+        return response.status(404).json({
+          status: 404,
+          message: 'Not Found',
+          error: 'No invoice found with the provided ID.',
+        })
+      }
+
+      // Verify authorization based on the invoice owner
+      const user = await auth.user
+      if (user?.id !== invoice.userId) {
+        return response.status(401).json({
+          status: 401,
+          message: 'Unauthorized',
+          error: 'The user ID of invoice is different from the user ID of the auth token used.',
+        })
+      }
+
+      // Retrieve invoice details
+      const invoiceDetail = await Invoice.query()
+        .if(user?.id, (query) => query.where('user_id', user?.id))
+        .if(invoice.id, (query) => query.where('id', invoice.id))
+        .preload('user')
+        .preload('items')
+
+      return response.status(200).json({
+        status: 200,
+        message: 'Success',
+        data: invoiceDetail,
+      })
+    } catch (error) {
+      return response.status(500).json({
+        status: 500,
+        message: 'Internal Server Error',
+        error: error,
+      })
+    }
+  }
 }
