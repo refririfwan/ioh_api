@@ -1,10 +1,10 @@
 import { DateTime } from 'luxon'
-import { nanoid } from 'nanoid'
+// import { nanoid } from 'nanoid'
 import {
   BaseModel,
   BelongsTo,
   HasMany,
-  beforeCreate,
+  // beforeCreate,
   belongsTo,
   column,
   hasMany,
@@ -38,24 +38,24 @@ export default class Invoice extends BaseModel {
   public user: BelongsTo<typeof User>
 
   @hasMany(() => InvoiceItem)
-  public invoices: HasMany<typeof InvoiceItem>
+  public items: HasMany<typeof InvoiceItem>
 
-  @beforeCreate()
-  public static async setDueDateAndTotalAmount(model: Invoice) {
-    const d2AfterCreatedAt = DateTime.local().plus({ days: 2 })
-    model.dueDate = d2AfterCreatedAt
+  // @beforeCreate()
+  // public static async setDueDateAndTotalAmount(model: Invoice) {
+  //   const d2AfterCreatedAt = DateTime.local().plus({ days: 2 })
+  //   model.dueDate = d2AfterCreatedAt
 
-    // Generate a unique invoice number based on the due date
-    const invoiceDate = d2AfterCreatedAt.toFormat('yyyyMMdd')
-    const invoicePrefix = `INV-${invoiceDate}`
-    const uniqueId = nanoid(5)
-    model.invoiceNumber = `${invoicePrefix}-${uniqueId}`
+  //   // Generate a unique invoice number based on the due date
+  //   const invoiceDate = d2AfterCreatedAt.toFormat('yyyyMMdd')
+  //   const invoicePrefix = `INV-${invoiceDate}`
+  //   const uniqueId = nanoid(5)
+  //   model.invoiceNumber = `${invoicePrefix}-${uniqueId}`
 
-    // Calculate the total amount from invoice items
-    let totalAmount = 0
-    for (const item of model.invoices) {
-      totalAmount += item.price * item.quantity
-    }
-    model.totalAmount = totalAmount
-  }
+  //   // Calculate the total amount from invoice items
+  //   let totalAmount = 0
+  //   for (const item of model.invoices) {
+  //     totalAmount += item.price * item.quantity
+  //   }
+  //   model.totalAmount = totalAmount
+  // }
 }

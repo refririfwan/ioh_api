@@ -63,10 +63,10 @@
     "@adonisjs/lucid": "^18.4.2",
     "@adonisjs/repl": "^3.1.11",
     "luxon": "^3.4.4",
-    "nanoid": "^5.0.3",
     "pg": "^8.11.3",
     "proxy-addr": "^2.0.7",
     "reflect-metadata": "^0.1.13",
+    "short-uuid": "^4.2.2",
     "source-map-support": "^0.5.21"
   }
 }
