@@ -25,4 +25,5 @@ Route.group(() => {
   Route.post('/auth/login', 'AuthController.login')
   Route.post('/invoices', 'InvoicesController.create').middleware('auth')
   Route.put('/invoices/:id', 'InvoicesController.update').middleware('auth')
+  Route.delete('/invoices/:id', 'InvoicesController.delete').middleware('auth')
 }).prefix('/api')
