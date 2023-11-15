@@ -51,6 +51,7 @@ export default class InvoicesController {
         await item.save()
       }
 
+      // Retrieve the created invoice details
       const invoiceDetail = await Invoice.query()
         .if(userId, (query) => query.where('user_id', userId))
         .if(invoice.id, (query) => query.where('id', invoice.id))
@@ -147,6 +148,48 @@ export default class InvoicesController {
         status: 200,
         message: 'Updated',
         data: invoiceDetail,
+      })
+    } catch (error) {
+      return response.status(500).json({
+        status: 500,
+        message: 'Internal Server Error',
+        error: error,
+      })
+    }
+  }
+
+  public async delete({ auth, response, params }: HttpContextContract) {
+    try {
+      // Check if an invoice with the provided ID exists
+      const invoice = await Invoice.query().where('id', params.id).first()
+
+      if (!invoice) {
+        return response.status(404).json({
+          status: 404,
+          message: 'Not Found',
+          error: 'No invoice found with the provided ID.',
+        })
+      }
+
+      // Verify authorization based on the invoice owner
+      const user = await auth.user
+      if (user?.id !== invoice.userId) {
+        return response.status(401).json({
+          status: 401,
+          message: 'Unauthorized',
+          error: 'The user ID sent is different from the user ID of the auth token used.',
+        })
+      }
+
+      // Delete the invoice include items
+      await invoice.delete()
+
+      return response.status(200).json({
+        status: 200,
+        message: 'Deleted',
+        data: {
+          invoiceId: params.id,
+        },
       })
     } catch (error) {
       return response.status(500).json({
